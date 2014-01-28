@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +25,7 @@ class CrawlerUtils {
         try {
             int responseCode = c.getResponseCode();
             if (responseCode != 200)
-                return null;
+                throw new IOException(c.getResponseMessage());
 
             String contentType = c.getContentType();
             if ((contentType == null) || (!contentType.startsWith("text/html")))
