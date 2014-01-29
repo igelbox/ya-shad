@@ -55,11 +55,28 @@ class CrawlerUtils {
 
     private static final Pattern RG_HTTP = Pattern.compile("http://[a-z\\\\./&=\\\\?]+", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
-    static Iterator<String> extract(CharSequence content) {
-        Collection<String> result = new ArrayList<>();
-        Matcher m = RG_HTTP.matcher(content);
-        while (m.find())
-            result.add(m.group());
-        return result.iterator();
+    static Iterator<String> extract(final CharSequence content) {
+        return new Iterator<String>() {
+            Matcher m = RG_HTTP.matcher(content);
+            boolean nexted;
+
+            @Override
+            public boolean hasNext() {
+                if (!nexted)
+                    nexted = m.find();
+                return nexted;
+            }
+
+            @Override
+            public String next() {
+                nexted = false;
+                return m.group();
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 }
