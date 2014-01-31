@@ -12,12 +12,14 @@ public class Main {
         void process() throws Exception {
             think();
             synchronized (left) {
-                log("took left fork");
+                logFork(left, "took left");
                 Thread.sleep(100);//force deadlock
                 synchronized (right) {
-                    log("took right fork");
+                    logFork(right, "took right");
                     eat();
+                    logFork(right, "release right");
                 }
+                logFork(left, "release left");
             }
         }
     }
@@ -27,9 +29,9 @@ public class Main {
     public static void main(String[] args) throws Throwable {
         final int PHILOSOPHER_COUNT = 5;
         AbstractPhilosopher[] philosophers = new AbstractPhilosopher[PHILOSOPHER_COUNT];
-        Fork left = new Fork(), last = left;
+        Fork left = new Fork(philosophers.length - 1), last = left;
         for (int i = 0; i < philosophers.length; i++) {
-            Fork right = (i == philosophers.length - 1) ? last : new Fork();
+            Fork right = (i == philosophers.length - 1) ? last : new Fork(i);
             philosophers[i] = new DeadlockPhilosopher(i, left, right);
             left = right;
         }

@@ -46,4 +46,8 @@ abstract class AbstractPhilosopher {
     void log(String state) {
         System.out.println("[Philosopher " + id + "] " + state);
     }
+
+    void logFork(Fork fork, String actionAndSide) {
+        log(actionAndSide + " fork-" + fork.id);
+    }
 }
