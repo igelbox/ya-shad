@@ -2,14 +2,23 @@ package shad.pardis.philosophers;
 
 public class Main {
 
-    static class Philosopher extends AbstractPhilosopher {
+    static class DeadlockPhilosopher extends AbstractPhilosopher {
 
-        Philosopher(int id, Fork left, Fork right) {
+        DeadlockPhilosopher(int id, Fork left, Fork right) {
             super(id, left, right);
         }
 
         @Override
         void process() throws Exception {
+            think();
+            synchronized (left) {
+                log("took left fork");
+                Thread.sleep(100);//force deadlock
+                synchronized (right) {
+                    log("took right fork");
+                    eat();
+                }
+            }
         }
     }
 
@@ -21,7 +30,7 @@ public class Main {
         Fork left = new Fork(), last = left;
         for (int i = 0; i < philosophers.length; i++) {
             Fork right = (i == philosophers.length - 1) ? last : new Fork();
-            philosophers[i] = new Philosopher(i, left, right);
+            philosophers[i] = new DeadlockPhilosopher(i, left, right);
             left = right;
         }
         Thread[] threads = new Thread[philosophers.length];
