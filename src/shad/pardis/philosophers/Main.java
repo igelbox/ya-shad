@@ -46,7 +46,20 @@ public class Main {
         stopSimulation = true;
         for (Thread thread : threads)
             thread.join();
-        for (AbstractPhilosopher philosopher : philosophers)
+
+        int minEatCount = Integer.MAX_VALUE, maxEatCount = Integer.MIN_VALUE;
+        long minWaitTime = Long.MAX_VALUE, maxWaitTime = Long.MIN_VALUE;
+        for (AbstractPhilosopher philosopher : philosophers) {
             philosopher.log("ate " + philosopher.eatCount + " times and waited " + philosopher.waitTime + " ms");
+            int eatCount = philosopher.eatCount;
+            minEatCount = Math.min(minEatCount, eatCount);
+            maxEatCount = Math.max(maxEatCount, eatCount);
+            long waitTime = philosopher.waitTime;
+            minWaitTime = Math.min(minWaitTime, waitTime);
+            maxWaitTime = Math.max(maxWaitTime, waitTime);
+        }
+        float cEatCount = (minEatCount + maxEatCount) / 2f;
+        float cWaitTime = (minWaitTime + maxWaitTime) / 2f;
+        System.out.println("Philosophers ate " + cEatCount + "\u00B1" + (maxEatCount - cEatCount) + " times and waited " + cWaitTime + '\u00B1' + (maxWaitTime - cWaitTime) + " ms");
     }
 }
