@@ -36,7 +36,7 @@ public class Main {
         Thread[] threads = new Thread[philosophers.length];
         for (int i = 0; i < philosophers.length; i++) {
             final AbstractPhilosopher philosopher = philosophers[i];
-            Thread thread = threads[i] = new Thread() {
+            threads[i] = new Thread() {
                 @Override
                 public void run() {
                     philosopher.log("started");
@@ -49,8 +49,10 @@ public class Main {
                     }
                 }
             };
-            thread.start();
         }
+
+        for (Thread thread : threads)
+            thread.start();
         Thread.sleep(60000);
         stopSimulation = true;
         for (Thread thread : threads)
