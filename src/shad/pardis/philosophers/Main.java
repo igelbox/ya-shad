@@ -24,6 +24,40 @@ public class Main {
         }
     }
 
+    static class SmartPhilosopher extends AbstractPhilosopher {
+
+        SmartPhilosopher(int id, Fork left, Fork right) {
+            super(id, left, right);
+        }
+
+        @Override
+        void process() throws Exception {
+            think();
+            if ((id % 2) == 0)
+                synchronized (left) {
+                    logFork(left, "took left");
+                    Thread.sleep(100);//force deadlock
+                    synchronized (right) {
+                        logFork(right, "took right");
+                        eat();
+                        logFork(right, "release right");
+                    }
+                    logFork(left, "release left");
+                }
+            else
+                synchronized (right) {
+                    logFork(right, "took right");
+                    Thread.sleep(100);//force deadlock
+                    synchronized (left) {
+                        logFork(left, "took left");
+                        eat();
+                        logFork(left, "release left");
+                    }
+                    logFork(right, "release right");
+                }
+        }
+    }
+
     static volatile boolean stopSimulation;
 
     public static void main(String[] args) throws Throwable {
@@ -32,7 +66,7 @@ public class Main {
         Fork left = new Fork(philosophers.length - 1), last = left;
         for (int i = 0; i < philosophers.length; i++) {
             Fork right = (i == philosophers.length - 1) ? last : new Fork(i);
-            philosophers[i] = new DeadlockPhilosopher(i, left, right);
+            philosophers[i] = new SmartPhilosopher(i, left, right);
             left = right;
         }
         Thread[] threads = new Thread[philosophers.length];
