@@ -43,8 +43,10 @@ abstract class AbstractPhilosopher {
         startWait = System.currentTimeMillis();
     }
 
+    private static final long startTime = System.currentTimeMillis();
+
     void log(String state) {
-        System.out.println("[Philosopher " + id + "] " + state);
+        System.out.format("%06d [Philosopher %d] %s %n", (System.currentTimeMillis() - startTime), id, state);
     }
 
     void logFork(Fork fork, String actionAndSide) {
