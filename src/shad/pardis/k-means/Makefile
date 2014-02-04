@@ -5,3 +5,12 @@ kmeans:	kmeans.cpp
 
 clean:
 	rm kmeans
+
+gen:	gen.cpp
+	g++ -o $@ $<
+
+points.csv:	gen
+	./gen >$@
+
+clusters.csv:	points.csv kmeans
+	./kmeans <points.csv >$@
