@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     while (scanf("%lf;%lf\n", &p.x, &p.y) != EOF)
         points.push_back(p);
 
-    unsigned num_clusters = 50;
+    unsigned num_clusters = 2000;
     Point clusters[num_clusters];
     clusterize(&points[0], points.size(), clusters, num_clusters, dist_sqr);
 

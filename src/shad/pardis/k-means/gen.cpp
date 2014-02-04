@@ -5,11 +5,11 @@
 static const double//
         SIZE_X = 100.0,
         SIZE_Y = 100.0,
-        RADIUS_MAX = 30.0;
+        RADIUS_MAX = 1.0;
 static const unsigned//
-        CLUSTER_COUNT = 50,
-        POINTS_PER_CLUSTER_MIN = 600,
-        POINTS_PER_CLUSTER_MAX = 2400;
+        CLUSTER_COUNT = 2000,
+        POINTS_PER_CLUSTER_MIN = 20,
+        POINTS_PER_CLUSTER_MAX = 50;
 
 template<class T> T uniform(T range) {
     return range * rand() / RAND_MAX;
