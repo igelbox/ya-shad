@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cfloat>
 #include <cstdio>
+#include <ctime>
 #include <vector>
 
 struct Point {
@@ -12,8 +13,19 @@ double dist_sqr(const Point &p0, const Point &p1) {
     return dx * dx + dy * dy;
 }
 
+typedef unsigned long long nanos;
+
+nanos nanotime() {
+    timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec * 1E9L + ts.tv_nsec;
+}
+
+#define debout(F, V) fprintf(stderr, F, V)
+
 void clusterize(Point *points, unsigned num_points, Point *clusters, unsigned num_clusters, double (*fdist)(const Point &p0, const Point &p1)) {
     Point min = {DBL_MAX, DBL_MAX}, max = {-DBL_MAX, -DBL_MAX};
+    nanos t0 = nanotime();
     //calculate dimensions
     for (unsigned i = 0; i < num_points; i++) {
         Point &p = points[i];
@@ -26,6 +38,8 @@ void clusterize(Point *points, unsigned num_points, Point *clusters, unsigned nu
         if (p.y > max.y)
             max.y = p.y;
     }
+    nanos t1 = nanotime();
+    debout("calc dims: %f\n", (t1 - t0) / 1E9);
 
     //initalize cluster centroids
     for (unsigned i = 0; i < num_clusters; i++) {
@@ -40,6 +54,7 @@ void clusterize(Point *points, unsigned num_points, Point *clusters, unsigned nu
     do {
         changed = 0;
 
+        nanos t2 = nanotime();
         //find closest centroid for each point
         for (unsigned i = 0; i < num_points; i++) {
             unsigned nearest_cluster_index = 0;
@@ -55,6 +70,8 @@ void clusterize(Point *points, unsigned num_points, Point *clusters, unsigned nu
                 changed++;
             point_cluster[i] = nearest_cluster_index;
         }
+        nanos t3 = nanotime();
+        debout("find closest centroids: %f\n", (t3 - t2) / 1E9);
 
         //recalculate cluster centroids
         unsigned cluster_points[num_clusters];
@@ -81,6 +98,9 @@ void clusterize(Point *points, unsigned num_points, Point *clusters, unsigned nu
                 c.x = c.y = 0.0;
             }
         }
+        nanos t4 = nanotime();
+        debout("recalculate centroids: %f\n", (t4 - t3) / 1E9);
+        debout("changed points: %d\n", changed);
     } while (changed);
 }
 
