@@ -56,11 +56,13 @@ void clusterize(Point *points, unsigned num_points, Point *clusters, unsigned nu
 
         nanos t2 = nanotime();
         //find closest centroid for each point
+        #pragma omp parallel for reduction(+:changed) schedule(guided, 1024)
         for (unsigned i = 0; i < num_points; i++) {
+            Point p = points[i];
             unsigned nearest_cluster_index = 0;
             double nearest_cluster_distance = DBL_MAX;
             for (unsigned j = 0; j < num_clusters; j++) {
-                double dist = fdist(clusters[j], points[i]);
+                double dist = fdist(clusters[j], p);
                 if (dist < nearest_cluster_distance) {
                     nearest_cluster_distance = dist;
                     nearest_cluster_index = j;
